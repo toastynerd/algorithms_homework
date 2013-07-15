@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+@num_inversions = 0
 def merge_sort(array)
   temp_array = []
   left_half = []
@@ -14,12 +15,14 @@ def merge_sort(array)
     right_half = merge_sort(right_half)
   elsif array.size == 2
     left_half << array[0]
-    right_half <<  array[1]
+    right_half << array[1]
+    if right_half[0] > left_half[0]
+      @num_inversions += 1
+    end
   else
     right_half << array[0]
+    @num_inversions += 1
   end
-  puts "l: #{left_half}"
-  puts "r: #{right_half}"
   temp_array = merge(left_half,right_half)
   temp_array
 
@@ -28,17 +31,15 @@ end
 def merge(left_side, right_side)
   merged_array = []
   if left_side.empty?
-    @num_inversions += 1
     merged_array << right_side.shift
   elsif right_side.empty?
     merged_array << left_side.shift
   else
     while(!left_side.empty?)
       unless right_side.empty?
-        puts "some thing"
         if(left_side[0] < right_side[0])
           merged_array << left_side.shift
-        elsif left_side[0] > right_side[0]
+        else
           @num_inversions += 1
           merged_array << right_side.shift
         end
@@ -46,20 +47,21 @@ def merge(left_side, right_side)
         merged_array <<  left_side.shift
       end
     end
+
     while(!right_side.empty?)
       @num_inversions += 1
       merged_array << right_side.shift
     end
   end
+
   merged_array
 end
-@my_numbers = [8,7,6,5,4,3,2,1]
+@my_numbers = []
 
-# ARGF.readlines.each do |item|
-#   @my_numbers << item.to_i
-# end
-@num_inversions = 0
+ARGF.readlines.each do |item|
+  @my_numbers << item.to_i
+end
 @sorted = merge_sort(@my_numbers)
-puts @num_inversions
 print @sorted
 puts ""
+puts @num_inversions
